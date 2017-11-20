@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="row">
+<div class="container">
+	<div class="col-md-offset-4 col-md-4">
+	<h1>Edit Blog</h1>
+	
+	<form action="" method="post" name="editform">
+		{{ form.hidden_tag() }}
+		<div class="row">
+			<div class="form-group col-md-12">
+				{% for error in form.title.errors %}
+					<span style="color:red">{{ error }}</span><br>
+				{% endfor %}
+            	<label for="title" class="control-label">*Title</label><br>
+            	{{ form.title(class_='form-control') }}  
+        	</div>
+    	</div>
+    	<div class="row">
+			<div class="form-group col-md-12">
+				{% for error in form.content.errors %}
+					<span style="color:red">{{ error }}</span><br>
+				{% endfor %}
+            	<label for="email" class="control-label">*Content</label><br>
+            	{{ form.content(class_='form-control') }}  
+        	</div>
+    	</div>
+    	<div class="row">
+			<div class="form-group col-md-12">
+				{% for error in form.publication_date.errors %}
+					<span style="color:red">{{ error }}</span><br>
+				{% endfor %}
+            	<label for="password" class="control-label">Publication_date</label><br>
+            	{{ form.publication_date(class_='form-control') }}
+            </div>  
+        </div>
+		<p>{{form.submit(class_='btn btn-primary')}}</p>
+	</form>
+	</div>
+</div>
+</div>
+{% endblock %}
