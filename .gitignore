@@ -1,2 +1,5 @@
-migrations/
+*.py~
 *.pyc
+*.pyc~
+*.html~
+migrations/
