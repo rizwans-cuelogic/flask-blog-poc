@@ -3,7 +3,10 @@ Flask Microblogging PlatForm.
 
 For running application follow steps given below:
 	
-	1. create virtualenv and activate it.
+	1. create virtualenv and activate it as follows:
+		virtualenv venv
+		source venv/bin/activate
+		
 	2. pip install -r requirements.txt.
 	3. create database in postgresql.
 	4. export DATABASE_URL="postgresql://username:password@localhost:5432/database-name"
