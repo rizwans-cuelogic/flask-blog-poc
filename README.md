@@ -8,8 +8,8 @@ For running application follow steps given below:
 		source venv/bin/activate
 		
 	2. pip install -r requirements.txt.
-	3. create database in postgresql.
-	4. export DATABASE_URL="postgresql://username:password@localhost:5432/database-name"
+	3. create database blog and blog_test in postgresql with user postgres.
+	4. change url of database in config.py as per your database,username 
 	3. python run.py 
 
 
