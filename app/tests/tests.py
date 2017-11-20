@@ -11,9 +11,7 @@ from ..mod_blog.forms import BlogForm
 class TestCase(unittest.TestCase):
 
 	def setUp(self):
-		app.config['TESTING'] = True
-		app.config['WTF_CSRF_ENABLED'] = False
-		app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+		app.config.from_object('config.TestingConfig')
 		self.app = app.test_client()
 		self.app_context = app.test_request_context()                      
 		self.app_context.push()       
