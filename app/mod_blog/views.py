@@ -10,6 +10,11 @@ from .forms import BlogForm
 @mod_blog.route('/addblog',methods=['GET','POST'])
 @login_required
 def add_blog():
+	""" 
+		view for creating blog on post and rendered add blog template on get method 
+	
+	"""
+
 	blogform = BlogForm()
 
 	if blogform.validate_on_submit():
@@ -35,6 +40,10 @@ def add_blog():
 @mod_blog.route('/listblog')
 @login_required
 def list_blog():
+	""" 
+		view for listing blog 
+	
+	"""
 	
 	blogs = current_user.blogs.all()
 
@@ -43,6 +52,11 @@ def list_blog():
 @mod_blog.route('/deleteblog/<int:id>')
 @login_required	
 def delete_blog(id):
+	""" 
+		view for deleting blog
+
+	"""
+
 	blog=Blog.query.filter_by(id=id).first()
 	if blog:
 		db.session.delete(blog)
@@ -53,6 +67,10 @@ def delete_blog(id):
 @mod_blog.route('/editblog/<int:id>',methods=['GET','POST'])
 @login_required
 def edit_blog(id):
+	"""
+		view for editing blog
+
+	"""
 	blog= Blog.query.filter_by(id=id).first()
 	blogform =BlogForm()
 	if blogform.validate_on_submit():
@@ -74,6 +92,11 @@ def edit_blog(id):
 @mod_blog.route('/detailblog/<int:id>',methods=['GET'])
 @login_required
 def detail_blog(id):
+	""" 
+		view for getting blog detail
+	
+	"""
+
 	blog= Blog.query.filter_by(id=id).first()
 	if blog:
 		return render_template('detailblog.html',blog=blog)	
@@ -81,5 +104,10 @@ def detail_blog(id):
 @mod_blog.route('/allblog',methods=['GET'])
 @login_required
 def all_blog():
+	""" 
+		view for retriving all blog
+	
+	"""
+
 	blogs = Blog.query.all()
 	return render_template('allblog.html',blogs=blogs)

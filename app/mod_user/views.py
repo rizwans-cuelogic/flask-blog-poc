@@ -9,6 +9,9 @@ from app import db
 
 @mod_user.route('/register',methods=['GET','POST'])
 def register():
+
+	""" view for registering users """
+	
 	registerform = RegisterForm()
 	loginform = LoginForm()	
 	if registerform.validate_on_submit():
@@ -25,6 +28,9 @@ def register():
 
 @mod_user.route('/login',methods=['GET','POST'])
 def login():
+	
+	""" view for users login """
+	
 	login_form=LoginForm()
 
 	if login_form.validate_on_submit():
@@ -48,6 +54,9 @@ def logout():
 @mod_user.route('/profile/<username>',methods=['GET','POST'])
 @login_required
 def profile(username):
+	
+	""" view for editing user profile """
+
 	editform = EditForm()
 
 	if editform.validate_on_submit():

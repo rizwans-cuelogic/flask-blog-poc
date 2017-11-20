@@ -5,6 +5,7 @@ from . import main
 
 @main.route('/')
 def index():
+	"""  index page """	
 	blogs=[]
 	if current_user.is_authenticated:
 		blogs = current_user.blogs.all()

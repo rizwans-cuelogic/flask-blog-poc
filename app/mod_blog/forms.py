@@ -9,6 +9,8 @@ from app.mod_user.models import User,Blog
 
 class BlogForm(Form):
 
+	""" BlogForm for adding a blog """
+	
 	title = StringField('Title',validators=[DataRequired(),Length(1,128)])
 	content =TextAreaField('Content',validators=[DataRequired()])
 	publication_date = DateField('publicaion_date',format='%Y/%m/%d',
