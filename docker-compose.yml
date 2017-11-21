@@ -1,0 +1,40 @@
+version: '2'
+services:
+  flaskapp-postgres:
+    
+    image: postgres
+
+    environment:
+      - POSTGRES_PASSWORD=admin123
+    
+    ports:
+      - 5432:5432
+
+    volumes:
+      - ./docker-entrypoint-initdb.d/init.sql:/flask-blog-poc/docker-entrypoint-initdb.d/10-init.sql
+
+    expose:
+      - '5432'  
+
+  web:
+
+    build: .   
+
+    ports:
+      - 8085:8085
+    
+    volumes:
+      - .:/flask-blog-poc
+    
+    depends_on:
+      - flaskapp-postgres
+      
+    environment:
+      - DATABASE_NAME=blog
+      - DATABASE_USER=postgres
+      - DATABASE_PASS=admin123
+      - DATABASE_HOST=flaskapp-postgres
+      - DATABASE_PORT=5432
+    
+    expose:
+      - '8085'
