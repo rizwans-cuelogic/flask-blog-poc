@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block head %}
+	<style>
+		.margin {margin-bottom: 45px;}
+		.bg-1 { 
+      		background-color: #1abc9c; /* Green */
+      		color: #ffffff;
+  		}
+  		body {
+      		font: 20px Montserrat, sans-serif;
+      		line-height: 1.8;
+    	}
+    	.bg-2 { 
+      		background-color: #474e5d; /* Dark Blue */
+      		color: #ffffff;
+  		}
+  		.jumbotron{
+  			margin-top:70px;
+  			background-color:transparent !important;
+  		}
+  		.landing{
+  			background-image: url("/static/images/home-bg.jpg");
+  			background-repeat: no-repeat;
+  			background-size: cover;
+  			height:-webkit-calc(100% - (80px));;
+  			width: 100%;
+  		}
+
+	</style>
+{% endblock %}
+{% block content %}
+	{% if current_user.is_authenticated %}
+		<div class="container-fluid bg-1 text-center">
+		{% for message in get_flashed_messages() %}
+    		{{ message }}
+  	{% endfor %}
+			<h1>Hi,{{current_user.username}}</h1>
+  			<img src="{{ url_for('static',filename='images/avatar.png') }}" class="img-responsive img-circle margin" style="display:inline" alt="profile" width="250" height="250">
+  			<h3>Username:{{ current_user.username }}</h3>
+  			<h3>Email: {{ current_user.email }}</h3>
+  			{% if current_user.contact %}
+  				<h3>Contact: {{ current_user.contact}}</h3>
+  			{% endif %}
+  			{% if current_user.Gender %}
+  				<h3>Gender:{{ current_user.Gender }}</h3>
+  			{% endif %}
+  			{% if current_user.Address %}
+  				<h3>Address:{{ current_user.Address }}</h3>
+  			{% endif %}
+  		</div>
+  	{% else %}
+  		<div class="container-fluid text-center landing">
+  		{% for message in get_flashed_messages() %}
+    		{{ message }}
+  		{% endfor %}
+  		
+		<div class="jumbotron">
+ 	 			<h1>Blogger World</h1>      
+  				<p>Blogger is the most popular blogging platform for people on the web.</p>
+			</div>
+		</div>
+		{% endif %}
+
+	{% if current_user.is_authenticated %}
+	<div class="container-fluid bg-2 text-center">
+  		<h3 class="margin">My Blogs</h3>
+  		{% if blogs %}
+  			{% for blog in blogs %}
+				{% if not loop.index0 is divisibleby 2 %}
+					<div class="row">
+				{% endif %}
+					<div class="col-md-6">	
+						<h3>{{ blog.title }}</h3>
+  					</div>
+  				{% if loop.index is divisibleby 2 %}
+  					</div>
+				{%endif%}
+  			{% endfor %}
+		{% else %}
+			<h3>No Blogs yet.</h3>
+		{% endif %}	
+	</div>
+	{% endif %}
+
+{% endblock %}

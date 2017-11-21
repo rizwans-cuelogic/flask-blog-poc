@@ -1,0 +1,91 @@
+<html>
+	<head>
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <style>
+         .navbar {
+          padding-top: 15px;
+          padding-bottom: 15px;
+          border: 0;
+          border-radius: 0;
+          margin-bottom: 0;
+          font-size: 12px;
+          letter-spacing: 5px;
+        }
+      .navbar-nav  li a:hover {
+        color: #1abc9c !important;
+      }
+      p {font-size: 16px;}
+      
+      .bg-4 { 
+        background-color: #2f2f2f; /* Black Gray */
+        color: #fff;
+        bottom:0;
+      }
+      .middle{
+        padding-top:50px;
+      }
+      footer{
+        position: absolute;
+        bottom: 0px;
+        width: 100%;
+      }
+      body{
+          position: relative;
+          padding-bottom: 88px;
+      }
+      .color-style{ 
+        color:#777;   
+      }
+      .margin-tp{
+        margin-top:20px;
+      }
+  </style>
+
+    </style>
+    {% block head %}
+    {% endblock %}
+	</head>
+	<body>
+  <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="{{ url_for('main.index') }}">Blogger</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      {% if current_user.is_authenticated %}
+      <ul class="nav navbar-nav">
+        <li><a href="{{ url_for('mod_user.profile',username=current_user.username)}}">Edit Profile</a></li>
+        <li><a href="{{ url_for('mod_blog.add_blog') }}">Add Blog</a></li>
+        <li><a href="{{ url_for('mod_blog.list_blog') }}">List Blog</a></li>
+        <li><a href="{{ url_for('mod_blog.all_blog') }}">All Blogs</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{ url_for('mod_user.logout')}}">Logout</a></li>
+      </ul>
+      {% else %}
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{{ url_for('mod_user.login')}}">Login</a></li>
+          <li><a href="{{ url_for('mod_user.register')}}">Register</a></li>
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+  
+		{% block content %}
+
+		{% endblock %}
+
+  <footer class="container-fluid bg-4 text-center">
+    <p class="middle">Blogger best blogging platform <a href="#">Rizwan Shaikh</a></p> 
+  </footer>
+  </body>
+</html>	

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block head %}
+  <style>
+  .color-style{ 
+    color:#777;   
+   }
+  </style>
+{% endblock %}
+{% block content %}
+
+<div class="container">
+  {% for message in get_flashed_messages() %}
+      <p class="text-center color-style">{{ message }}</p>
+  {% endfor %}
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+      		<div class="modal-header">
+        		<h1 class="modal-title color-style">Login</h1>
+     		 </div>
+      		<div class="modal-body">
+        	<form action="" method="post" name="login">
+  				{{ form.hidden_tag() }}
+    			<div class="form-group">
+    			{% for error in form.email.errors %}
+					<span style="color:red ">[{{ error }}]</span><br>
+				{% endfor %}
+      				<label for="email">Email:</label>
+      				{{ form.email(class_='form-control') }}
+    			</div>
+    			<div class="form-group">
+      				<label for="password">Password:</label>
+      				{{ form.password(class_='form-control') }}
+    			</div>
+		    	<div class="checkbox">
+		      		<label>{{ form.remember_me }} Remember me</label>
+		    	</div>
+    			{{ form.submit(class_='btn btn-success form-control')}}
+			</form>
+      		</div>
+    	</div>
+    </div>
+	</div>
+
+{% endblock %}
