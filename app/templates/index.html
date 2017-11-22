@@ -32,7 +32,7 @@
 	{% if current_user.is_authenticated %}
 		<div class="container-fluid bg-1 text-center">
 		{% for message in get_flashed_messages() %}
-    		{{ message }}
+    	<p class="margin-tp">	{{ message }}</p>
   	{% endfor %}
 			<h1>Hi,{{current_user.username}}</h1>
   			<img src="{{ url_for('static',filename='images/avatar.png') }}" class="img-responsive img-circle margin" style="display:inline" alt="profile" width="250" height="250">
