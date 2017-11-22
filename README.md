@@ -15,4 +15,13 @@ For running application follow steps given below:
 
 For running Test:
 
-	1. run  python -m unittest app.tests.tests command. 	
+	1. run  python -m unittest app.tests.tests command.
+
+
+For Running app in dockerized containers:
+	
+	1.update SQLALCHEMY_DATABASE_URI in congig.py as follows:
+		replace localhost with flaskapp-postgres
+		add database name as postgres
+
+	2.run docker-compose up --build			 	
