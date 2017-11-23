@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
-
+{% block head %}
+	<script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
+	<script>tinymce.init({ selector:'textarea' });</script>
+{% endblock %}
 
 {% block content %}
 <div class="row">
 <div class="container">
-	<div class="col-md-offset-4 col-md-4">
-	<h1>Edit Blog</h1>
+	<div class="col-md-10">
+	<h2>Edit Blog</h2>
 	
 	<form action="" method="post" name="editform">
 		{{ form.hidden_tag() }}
@@ -24,7 +27,7 @@
 					<span style="color:red">{{ error }}</span><br>
 				{% endfor %}
             	<label for="email" class="control-label">*Content</label><br>
-            	{{ form.content(rows='10',class_='form-control') }}  
+            	{{ form.content(rows='20',class_='form-control') }}  
         	</div>
     	</div>
     	<div class="row">
