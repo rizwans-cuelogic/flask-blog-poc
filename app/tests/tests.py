@@ -16,5 +16,7 @@ if __name__ == '__main__':
 	runner = unittest.TextTestRunner()
 	user_tests = user_test_suite()
 	blog_tests = blog_test_suite()
+	print "\n\n\n.......Running User Test Suite..........\n\n\n"
 	runner.run(user_tests)
+	print "\n\n\n.......Running Blog Test Suite..........\n\n\n"
 	runner.run(blog_tests)	
