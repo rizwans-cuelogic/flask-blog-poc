@@ -1,22 +1,21 @@
-import os
 import unittest
 from flask import Flask,url_for
 from .. import app,db,mod_user,mod_blog
 from ..mod_user.models import User,Blog
-from ..mod_user.forms import LoginForm,RegisterForm,EditForm
 from ..mod_blog.forms import BlogForm
 
 
-class TestCase(unittest.TestCase):
-
-	def setUp(self):
+class BlogTestCase(unittest.TestCase):
+	@classmethod
+	def setUpClass(cls):
 		app.config.from_object('config.TestingConfig')
-		self.app = app.test_client()
-		self.app_context = app.test_request_context()                      
-		self.app_context.push()       
+		cls.app = app.test_client()
+		cls.app_context = app.test_request_context()                      
+		cls.app_context.push()       
 		db.create_all()
-		
-	def tearDown(self):
+
+	@classmethod 	
+	def tearDownClass(cls):
 		db.session.remove()
 		db.drop_all()
 
@@ -24,6 +23,10 @@ class TestCase(unittest.TestCase):
 	def create_user(self):
 		user = User(username="test",email="test@test.com",password="As123456")
 		return user
+
+	def get_user(self):
+		user = User.query.filter_by(username='test').first()
+		return user	
 
 
 	def test_addblog_url(self):
@@ -76,68 +79,16 @@ class TestCase(unittest.TestCase):
 		assert "Added blog successfully" in rv.data
 
 	def test_list_blog(self):
-		user= self.create_user()
-		db.session.add(user)
-		db.session.commit()
-		email="test@test.com"
-		password="As123456"
-		rv = self.app.post('/login', data=dict(
-				email=email,
-				password=password
-			), follow_redirects=True)
-
-		rv = self.app.post('/addblog',
-							data=dict(
-								title="this is test blog",
-								content="this is test content"	
-								),follow_redirects=True)
-					
-		rv = self.app.get('/listblog',follow_redirects=True)
-
-		assert "this is test blog" in rv.data
-
-	def test_list_blog_empty(self):
-		user= self.create_user()
-		db.session.add(user)
-		db.session.commit()
-		email="test@test.com"
-		password="As123456"
-		rv = self.app.post('/login', data=dict(
-				email=email,
-				password=password
-			), follow_redirects=True)
-					
-		rv = self.app.get('/listblog',follow_redirects=True)
-
-		assert "you dont have any blog" in rv.data
-
-	def test_delete_blog(self):
-		user= self.create_user()
-		db.session.add(user)
-		db.session.commit()
-		email="test@test.com"
-		password="As123456"
-		rv = self.app.post('/login', data=dict(
-				email=email,
-				password=password
-			), follow_redirects=True)
+		user= self.get_user()
 		blog =Blog(title="this is test",content="this test content",author=user)
 		db.session.add(blog)
-		db.session.commit()
-		rv =self.app.get(url_for('mod_blog.delete_blog',id=blog.id),follow_redirects=True)
+		db.session.commit()			
+		rv = self.app.get('/listblog',follow_redirects=True)
+		assert "this is test" in rv.data
 
-		assert "you dont have any blog" in rv.data
 
 	def test_edit_blog(self):
-		user= self.create_user()
-		db.session.add(user)
-		db.session.commit()
-		email="test@test.com"
-		password="As123456"
-		rv = self.app.post('/login', data=dict(
-				email=email,
-				password=password
-			), follow_redirects=True)
+		user= self.get_user()
 		blog =Blog(title="this is test",content="this test content",author=user)
 		db.session.add(blog)
 		db.session.commit()
@@ -151,15 +102,7 @@ class TestCase(unittest.TestCase):
 		assert "Blog Updated Successfully" in rv.data
 
 	def test_blog_detail(self):
-		user= self.create_user()
-		db.session.add(user)
-		db.session.commit()
-		email="test@test.com"
-		password="As123456"
-		rv = self.app.post('/login', data=dict(
-				email=email,
-				password=password
-			), follow_redirects=True)
+		user= self.get_user()
 		blog =Blog(title="this is test",content="this test content",author=user)
 		db.session.add(blog)
 		db.session.commit()
@@ -170,18 +113,27 @@ class TestCase(unittest.TestCase):
  		assert "this test content" in rv.data
 
  	def test_all_blog(self):
- 		user= self.create_user()
-		db.session.add(user)
-		db.session.commit()
-		email="test@test.com"
-		password="As123456"
-		rv = self.app.post('/login', data=dict(
-				email=email,
-				password=password
-			), follow_redirects=True)
+ 	 	user= self.get_user()
 		blog =Blog(title="this is test",content="this test content",author=user)
 		db.session.add(blog)
 		db.session.commit()
 		rv = self.app.get('/allblog',follow_redirects=True)
 		assert "this is test" in rv.data
+
+
+	def test_delete_blog(self):
+		user= self.get_user()
+		blogs = Blog.query.delete()
+		blog =Blog(title="this is test",content="this test content",author=user)
+		db.session.add(blog)
+		db.session.commit()
+		rv =self.app.get(url_for('mod_blog.delete_blog',id=blog.id),follow_redirects=True)
+
+		assert "you dont have any blog" in rv.data	
+
+	def test_list_blog_empty(self):
+		user= self.get_user()
+		blogs = Blog.query.delete()
+		rv = self.app.get('/listblog',follow_redirects=True)
+		assert "you dont have any blog" in rv.data
 
