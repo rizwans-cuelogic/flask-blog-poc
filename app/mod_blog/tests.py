@@ -19,15 +19,13 @@ class BlogTestCase(unittest.TestCase):
 		db.session.remove()
 		db.drop_all()
 
-	
 	def create_user(self):
-		user = User(username="test",email="test@test.com",password="As123456")
+		user =  User(username="test",email="test@test.com",password="As123456")
 		return user
 
 	def get_user(self):
 		user = User.query.filter_by(username='test').first()
 		return user	
-
 
 	def test_addblog_url(self):
 		rv = self.app.get('/addblog')
