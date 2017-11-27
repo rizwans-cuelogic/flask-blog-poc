@@ -1,6 +1,6 @@
 from flask_wtf import Form
-from wtforms import StringField,BooleanField,PasswordField,SubmitField,TextAreaField,SelectField
-from wtforms.validators import DataRequired,Email,Length,EqualTo
+from wtforms import StringField,BooleanField,PasswordField,SubmitField,TextAreaField,SelectField,IntegerField
+from wtforms.validators import DataRequired,Email,Length,EqualTo,optional,NumberRange
 from .models import User,Blog
 
 GENDER =[('Male','M'),('Female','F')]
@@ -32,7 +32,7 @@ class EditForm(Form):
 
 	username = StringField("username",validators=[DataRequired()])
 	email = StringField("email",validators=[DataRequired(),Length(1,64),Email()])
-	contact = StringField("contact",validators=[Length(0,12)])
+	contact = IntegerField("contact",validators=[optional()])
 	address = TextAreaField("address")
 	gender = SelectField("Gender",choices=GENDER)
 	submit= SubmitField("Save Profile")	
