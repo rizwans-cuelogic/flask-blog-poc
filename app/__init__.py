@@ -3,9 +3,12 @@ from flask_admin import Admin,AdminIndexView,expose
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager,current_user,login_user,logout_user
 from flask_admin.contrib.sqla import ModelView
+from .momentjs import momentjs
 
 app = Flask(__name__)
 app.config.from_object('config.DevelopmentConfig')
+app.jinja_env.globals['momentjs'] = momentjs
+
 
 db = SQLAlchemy(app)
 lm = LoginManager(app)
