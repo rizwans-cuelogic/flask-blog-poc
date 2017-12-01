@@ -10,8 +10,7 @@ class CommentTests(unittest.TestCase):
 		app.config.from_object('config.TestingConfig')
 		cls.app = app.test_client()
 		cls.app_context = app.test_request_context()                      
-		cls.app_context.push()
-		cls.app.csrf_token = 'skdjsdjfer12132w434'       
+		cls.app_context.push()       
 		db.create_all()
 
 	@classmethod 	
