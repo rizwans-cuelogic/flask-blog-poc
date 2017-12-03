@@ -1,9 +1,26 @@
 import unittest
+import factory
+import config
 from flask import Flask,url_for
 from .. import app,db,mod_user,mod_blog
 from ..mod_user.models import User,Blog
 from ..mod_blog.forms import BlogForm
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy import orm
+from sqlalchemy import Column, Integer, Unicode, create_engine
 
+engine = create_engine(config.TestingConfig.SQLALCHEMY_DATABASE_URI)
+Session = orm.scoped_session(orm.sessionmaker(bind=engine))
+
+
+class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
+	class Meta:
+		model = User
+		sqlalchemy_session = Session   # the SQLAlchemy session object
+
+	username = "test"
+	email = "test@test.com"
+	password = "As123456"
 
 class BlogTestCase(unittest.TestCase):
 	@classmethod
@@ -13,19 +30,16 @@ class BlogTestCase(unittest.TestCase):
 		cls.app_context = app.test_request_context()                      
 		cls.app_context.push()       
 		db.create_all()
+		cls.session = Session()
+		user= UserFactory()
+		cls.session.commit()
 
 	@classmethod 	
 	def tearDownClass(cls):
+		cls.session.rollback()
+		Session.remove()
 		db.session.remove()
 		db.drop_all()
-
-	def create_user(self):
-		user =  User(username="test",email="test@test.com",password="As123456")
-		return user
-
-	def get_user(self):
-		user = User.query.filter_by(username='test').first()
-		return user	
 
 	def test_addblog_url(self):
 		rv = self.app.get('/addblog')
@@ -59,10 +73,7 @@ class BlogTestCase(unittest.TestCase):
 		self.assertFalse(blogform.validate(),False)
 
 
-	def test_add_blog(self):
-		user= self.create_user()
-		db.session.add(user)
-		db.session.commit()
+	def test_a_add_blog(self):
 		email="test@test.com"
 		password="As123456"
 		rv = self.app.post('/login', data=dict(
@@ -76,20 +87,16 @@ class BlogTestCase(unittest.TestCase):
 								),follow_redirects=True)
 		assert "Added blog successfully" in rv.data
 
-	def test_list_blog(self):
-		user= self.get_user()
-		blog =Blog(title="this is test",content="this test content",author=user)
-		db.session.add(blog)
-		db.session.commit()			
+	def test_b_list_blog(self):
+		
+		user=User.query.filter_by(username="test").first()			
 		rv = self.app.get('/listblog',follow_redirects=True)
 		assert "this is test" in rv.data
+		
 
-
-	def test_edit_blog(self):
-		user= self.get_user()
-		blog =Blog(title="this is test",content="this test content",author=user)
-		db.session.add(blog)
-		db.session.commit()
+	def test_c_edit_blog(self):
+		user=User.query.filter_by(username="test").first()
+	 	blog =Blog.query.filter_by(author=user).first()
 		rv = self.app.post(url_for('mod_blog.edit_blog',
 									id=int(blog.id)),
 							data=dict(
@@ -99,39 +106,27 @@ class BlogTestCase(unittest.TestCase):
 							follow_redirects=True)
 		assert "Blog Updated Successfully" in rv.data
 
-	def test_blog_detail(self):
-		user= self.get_user()
-		blog =Blog(title="this is test",content="this test content",author=user)
-		db.session.add(blog)
-		db.session.commit()
+	def test_c_blog_detail(self):
+		user=User.query.filter_by(username="test").first()
+	 	blog =Blog.query.filter_by(author=user).first()
 		rv = self.app.get(url_for('mod_blog.detail_blog',
 									id=int(blog.id)),
 									follow_redirects=True
 							)	
- 		assert "this test content" in rv.data
-
- 	def test_all_blog(self):
- 	 	user= self.get_user()
-		blog =Blog(title="this is test",content="this test content",author=user)
-		db.session.add(blog)
-		db.session.commit()
+ 		assert "this is test content" in rv.data
+ 		
+ 	def test_d_all_blog(self):
 		rv = self.app.get('/allblog',follow_redirects=True)
-		assert "this is test" in rv.data
+		assert "editing blog" in rv.data
 
-
-	def test_delete_blog(self):
-		user= self.get_user()
-		blogs = Blog.query.delete()
-		blog =Blog(title="this is test",content="this test content",author=user)
-		db.session.add(blog)
-		db.session.commit()
-		rv =self.app.get(url_for('mod_blog.delete_blog',id=blog.id),follow_redirects=True)
+	def test_e_delete_blog(self):
+		user=User.query.filter_by(username="test").first()
+	 	blog =Blog.query.filter_by(author=user).first()
+		rv =self.app.get(url_for('mod_blog.delete_blog',id=int(blog.id)),follow_redirects=True)
 
 		assert "you dont have any blog" in rv.data	
 
 	def test_list_blog_empty(self):
-		user= self.get_user()
-		blogs = Blog.query.delete()
 		rv = self.app.get('/listblog',follow_redirects=True)
 		assert "you dont have any blog" in rv.data
 
