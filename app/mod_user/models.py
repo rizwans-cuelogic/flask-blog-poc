@@ -18,6 +18,7 @@ class User(UserMixin,db.Model):
 	password_hash = db.Column(db.String(128))
 	blogs = db.relationship('Blog', backref='author',cascade="all,delete",lazy='dynamic')
 	user_comments =db.relationship('Comment', backref='commentator',cascade="all,delete",lazy='dynamic')
+	token = db.Column(db.Text,nullable=True)
 
 	def __str__(self):
 		return '<USER %s>' %(self.username)

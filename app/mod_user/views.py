@@ -1,11 +1,30 @@
 from flask import render_template,request,session,g,redirect,url_for,flash
 from flask_login import login_user,logout_user,login_required,current_user
-
+from urllib2 import HTTPError
+import json
 from . import mod_user
 from .forms import RegisterForm,LoginForm,EditForm
 from .models import User
 from app.main import main
 from app import db
+from requests_oauthlib import OAuth2Session
+from config import Auth
+
+def get_google_auth(state=None, token=None):
+	if token:
+		return OAuth2Session(Auth.CLIENT_ID, token=token)
+	if state:
+		return OAuth2Session(
+					Auth.CLIENT_ID,
+					state=state,
+					redirect_uri=Auth.REDIRECT_URI)
+	oauth = OAuth2Session(
+				Auth.CLIENT_ID,
+				redirect_uri=Auth.REDIRECT_URI,
+				scope=Auth.SCOPE
+			)
+	return oauth
+
 
 @mod_user.route('/register',methods=['GET','POST'])
 def register():
@@ -33,6 +52,17 @@ def login():
 	
 	login_form=LoginForm()
 
+	if current_user.is_authenticated:
+		return redirect(url_for('main.index'))
+
+	google = get_google_auth()
+	auth_url, state = google.authorization_url(
+							Auth.AUTH_URI, access_type='offline')
+	session['oauth_state'] = state
+	global oauth_state
+	oauth_state = state
+
+
 	if login_form.validate_on_submit():
 
 		user = User.query.filter_by(email=login_form.email.data).first()
@@ -41,7 +71,7 @@ def login():
 			login_user(user,login_form.remember_me.data)
 			return redirect(url_for('main.index'))
 		flash("Invalid Username and Password")	
-	return render_template('login.html',title='Login',form=login_form)
+	return render_template('login.html',title='Login',form=login_form,auth_url=auth_url)
 
 @mod_user.route('/logout')
 @login_required
@@ -78,3 +108,51 @@ def profile(username):
 		editform.gender.data = current_user.Gender
 
 	return render_template('edit_user.html',form=editform)
+
+
+@mod_user.route('/gCallback')
+def callback():
+	# Redirect user to home page if already logged in.
+	if current_user is not None and current_user.is_authenticated:
+		return redirect(url_for('main.index'))
+
+	if 'error' in request.args:
+		if request.args.get('error') == 'access_denied':
+			return 'You denied access.'
+		return 'Error encountered.'
+	if 'code' not in request.args and 'state' not in request.args:
+		return redirect(url_for('.login'))
+	else:
+		# Execution reaches here when user has
+		# successfully authenticated our app.
+
+		global oauth_state
+
+		google = get_google_auth(state=oauth_state)
+		try:
+			token = google.fetch_token(
+				Auth.TOKEN_URI,
+				client_secret=Auth.CLIENT_SECRET,
+				authorization_response=request.url)
+		except HTTPError:
+			return 'HTTPError occurred.'
+        
+		google = get_google_auth(token=token)
+		resp = google.get(Auth.USER_INFO)
+		if resp.status_code == 200:
+			user_data = resp.json()
+			email = user_data['email']
+			user = User.query.filter_by(email=email).first()
+			if user is None:
+				user = User()
+				user.email = email
+            
+			user.username = user_data['name']
+			print(token)
+			user.tokens = json.dumps(token)
+			user.avatar = user_data['picture']
+			db.session.add(user)
+			db.session.commit()
+			login_user(user)
+			return redirect(url_for('main.index'))
+		return 'Could not fetch your information.'
