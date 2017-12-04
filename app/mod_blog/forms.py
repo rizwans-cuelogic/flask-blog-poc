@@ -2,7 +2,9 @@ import datetime
 
 from flask_wtf import Form
 from wtforms_components import DateRange
-from wtforms import StringField,BooleanField,PasswordField,SubmitField,TextAreaField,SelectField,DateField,HiddenField
+from wtforms import ( StringField,BooleanField,PasswordField,SubmitField,
+		     TextAreaField,SelectField,DateField,HiddenField
+		    )
 from wtforms.validators import DataRequired,Email,Length,EqualTo,optional
 from app.mod_user.models import User,Blog
 
