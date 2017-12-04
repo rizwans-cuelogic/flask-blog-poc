@@ -1,4 +1,4 @@
-from flask import render_template,request,session,g,redirect,url_for,flash
+from flask import render_template,request,session,g,redirect,url_for,flash,abort
 from flask_login import login_user,logout_user,login_required,current_user
 from urllib2 import HTTPError
 import json
@@ -49,29 +49,33 @@ def register():
 def login():
 	
 	""" view for users login """
-	
-	login_form=LoginForm()
+	try:
 
-	if current_user.is_authenticated:
-		return redirect(url_for('main.index'))
+		login_form=LoginForm()
 
-	google = get_google_auth()
-	auth_url, state = google.authorization_url(
-							Auth.AUTH_URI, access_type='offline')
-	session['oauth_state'] = state
-	global oauth_state
-	oauth_state = state
-
-
-	if login_form.validate_on_submit():
-
-		user = User.query.filter_by(email=login_form.email.data).first()
-		if user is not None and user.verify_password(login_form.password.data):
-			session['remember_me']=login_form.remember_me.data
-			login_user(user,login_form.remember_me.data)
+		if current_user.is_authenticated:
 			return redirect(url_for('main.index'))
-		flash("Invalid Username and Password")	
-	return render_template('login.html',title='Login',form=login_form,auth_url=auth_url)
+
+		google = get_google_auth()
+		auth_url, state = google.authorization_url(
+								Auth.AUTH_URI, access_type='offline')
+		session['oauth_state'] = state
+		global oauth_state
+		oauth_state = state
+
+
+		if login_form.validate_on_submit():
+
+			user = User.query.filter_by(email=login_form.email.data).first()
+			if user is not None and user.verify_password(login_form.password.data):
+				session['remember_me']=login_form.remember_me.data
+				login_user(user,login_form.remember_me.data)
+				return redirect(url_for('main.index'))
+			flash("Invalid Username and Password")	
+		return render_template('login.html',title='Login',form=login_form,auth_url=auth_url)
+
+	except:
+		abort(500)
 
 @mod_user.route('/logout')
 @login_required
