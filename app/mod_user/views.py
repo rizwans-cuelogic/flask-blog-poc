@@ -75,6 +75,7 @@ def login():
 		return render_template('login.html',title='Login',form=login_form,auth_url=auth_url)
 
 	except:
+		
 		abort(500)
 
 @mod_user.route('/logout')
