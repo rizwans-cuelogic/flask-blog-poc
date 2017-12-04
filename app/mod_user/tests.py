@@ -1,8 +1,27 @@
 import unittest
+import factory
+import config
 from flask import Flask,url_for
 from .. import app,db,mod_user
 from ..mod_user.models import User
 from .forms import RegisterForm,LoginForm,EditForm
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy import orm
+from sqlalchemy import Column, Integer, Unicode, create_engine
+
+engine = create_engine(config.TestingConfig.SQLALCHEMY_DATABASE_URI)
+Session = orm.scoped_session(orm.sessionmaker(bind=engine))
+
+class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
+	class Meta:
+		model = User
+		sqlalchemy_session = Session   # the SQLAlchemy session object
+
+	username = "test"
+	email = "test@test.com"
+	password = "As123456"
+
+
 
 class UserTestCase(unittest.TestCase):
 	@classmethod
@@ -12,20 +31,16 @@ class UserTestCase(unittest.TestCase):
 		cls.app_context = app.test_request_context()                      
 		cls.app_context.push()       
 		db.create_all()
+		cls.session = Session()
+		user= UserFactory()
+		cls.session.commit()
 
 	@classmethod 	
 	def tearDownClass(cls):
+		cls.session.rollback()
+		Session.remove()
 		db.session.remove()
 		db.drop_all()
-
-	
-	def create_user(self):
-		user = User(username="test",email="test@test.com",password="As123456")
-		return user
-
-	def get_user(self):
-		user = User.query.filter_by(username='test').first()
-		return user	
 
 	def test_index_url(self):
 		rv = self.app.get('/')
@@ -96,10 +111,8 @@ class UserTestCase(unittest.TestCase):
 		self.assertFalse(editform.validate(),False)
 
 	def test_adduser(self):
-		user= self.create_user()
-		db.session.add(user)
-		db.session.commit()
-		assert user in db.session
+		user= self.session.query(User).filter_by(username="test").first()
+		assert user in self.session
 
 	def test_register_valid(self):
 		rv = self.app.post('/register', data=dict(
@@ -150,7 +163,7 @@ class UserTestCase(unittest.TestCase):
 
 
 	def test_profile(self):
-		user= self.get_user()
+		user= self.session.query(User).filter_by(username="test").first()
 		email="test@test.com"
 		password="As123456"
 		rv = self.app.post('/login', data=dict(

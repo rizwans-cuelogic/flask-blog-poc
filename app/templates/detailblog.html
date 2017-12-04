@@ -1,39 +1,13 @@
 {% extends 'base.html' %}
 
 {% block head %}
-	<style>
-	.blog-header{
-		margin-bottom:21px;
-	}
-	.blog-header h1{
-		margin-top:0px;
-		margin-bottom:7px;
-		word-wrap: break-word;
-		font-size:41px;
-		line-height:50px;
-	}
-	.blog-author{
-		font-size:11px;
-	}
-	.blog-author a{
-		margin-left:3px;
-		color:black;
-		text-decoration:none;
-	}
-	main{
-		font-size:15px;
-		line-height:26px;
-		margin-top:20px;
-		margin-bottom:20px;
-	}
-	.blog-content p{
-		word-wrap: break-word;
-		margin-bottom:26px;
-	}
-	main h3{
-    	font-size: 21px;
-	}
-	</style>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/detailblog.css') }}"/>
+	<script type="text/javascript">
+		function toggler(divId) {
+    		$("." + divId).toggle();
+		}
+	</script>
+	<script src="/static/js/moment.min.js"></script>
 {% endblock %}
 {% block content %}
 	<div class="container">
@@ -41,13 +15,82 @@
 			<main class="col-md-8">
 					<div class="blog-header">
 						<h1>{{blog.title}}</h1>
-						<span class="blog-author">By <a href="#"><strong>{{blog.author.username}}</strong></a></span>
+						<span class="blog-author">By <a href="#"><strong>{{blog.author.username}}</strong></a> - {{ momentjs(blog.publication_date).format('LL') }}</span></span>
 					</div>
 					<div class="blog-content">
 					{{blog.content | safe}}
 					</div>
 			</main>
 		</div>
+		<h1 class="lead">Comments</h1>
+		<form action="" method="post" name=commentform>
+				{{form.hidden_tag()}}
+			<div class="form-group">
+				{% for error in form.content.errors %}
+					<span style="color:red ">[{{ error }}]</span><br>
+				{% endfor %}
+				{{ form.content(rows="4",class="form-control") }}
+			</div>
+				{{ form.submit(class="btn btn-success button-cl") }}			
+		</form>
+
+		{% for comment in comments %}
+			{% if  not comment.cm_replies %}
+			<blockquote>
+                <div class="pull-left image">
+                    <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
+                </div>
+				<h4>{{ comment.content }}</h4>
+				<span class="blog-author author-mr"> - by {{ comment.commentator.username }}</span>
+				<span class="sub-text">{{ momentjs(comment.created).fromNow() }}</span>
+				<button class="btn btn-success button-cl" onclick="toggler('{{ comment.id }}');">reply</button>
+					<div class = "{{ comment.id }}" style="display:none;">
+						<form action="" method="post" name=commentform class="reply-form">
+						{% if form.csrf_token %}
+							{{form.csrf_token()}}
+						{% endif %}
+						<div class="form-group">
+						{% for error in form.content.errors %}
+							<span style="color:red ">[{{ error }}]</span><br>
+						{% endfor %}
+						{{ form.content(rows="1",class="form-control") }}
+						{{ form.parent_id(value = comment.id) }}
+						</div>
+						{{ form.submit(class="btn btn-success button-cl") }}			
+						</form>	
+					</div>			
+			</blockquote>
+			{% endif %}
+			{% for reply in comment.replies recursive %}
+				<blockquote class="blockqoute mr-l">
+				<div class="pull-left image">
+                    <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
+                </div>
+				<h4>{{ reply.content }}</h4>
+				<span class="blog-author author-mr"> - by {{ reply.commentator.username}}</span>
+				<span class="sub-text">{{ momentjs(reply.created).fromNow() }}</span>
+				{{ loop(reply.replies) }}
+				<button class="btn btn-success button-cl" onclick="toggler('{{ reply.id }}');">reply</button>
+				<div class = "{{ reply.id }}" style="display:none;">
+						<form action="" method="post" name=commentform class="reply-form">
+						{% if form.csrf_token %}
+							{{form.csrf_token()}}
+						{% endif %}
+						<div class="form-group">
+						{% for error in form.content.errors %}
+							<span style="color:red ">[{{ error }}]</span><br>
+						{% endfor %}
+						{{ form.content(rows="1",class="form-control") }}
+						{{ form.parent_id(value = comment.id) }}
+						</div>
+						{{ form.submit(class="btn btn-success button-cl") }}			
+					</form>	
+					</div>
+				</blockquote>
+			{% endfor %}
+		{% endfor %}
 	</div>	
+	
+	
 
 {% endblock %}

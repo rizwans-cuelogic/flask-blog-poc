@@ -1,10 +1,10 @@
 from flask import render_template,request,session,g,redirect,url_for,flash
 from flask_login import login_user,logout_user,login_required,current_user
 from app.main import main
-from app.mod_user.models import User,Blog
+from app.mod_user.models import User,Blog,Comment
 from app import db
 from . import mod_blog
-from .forms import BlogForm
+from .forms import BlogForm,CommentForm
 
 
 @mod_blog.route('/addblog',methods=['GET','POST'])
@@ -89,7 +89,7 @@ def edit_blog(id):
 	
 	return render_template('editblog.html',form=blogform)
 	
-@mod_blog.route('/detailblog/<int:id>',methods=['GET'])
+@mod_blog.route('/detailblog/<int:id>',methods=['GET','POST'])
 @login_required
 def detail_blog(id):
 	""" 
@@ -98,8 +98,23 @@ def detail_blog(id):
 	"""
 
 	blog= Blog.query.filter_by(id=id).first()
-	if blog:
-		return render_template('detailblog.html',blog=blog)	
+	comments = blog.comments.all()
+	form = CommentForm()
+	
+	if form.validate_on_submit():
+	
+		if form.parent_id.data =="":
+			comment = Comment(content=form.content.data,blog=blog,commentator=current_user)
+			db.session.add(comment)
+			db.session.commit()
+			comments=blog.comments.all()
+		else:
+			comment = Comment(content=form.content.data,blog=blog,commentator=current_user,parent=int(form.parent_id.data))
+			db.session.add(comment)
+			db.session.commit()
+			comments=blog.comments.all()	
+		return redirect(url_for('.detail_blog',id=blog.id))
+	return render_template('detailblog.html',blog=blog,comments=comments,form=form)
 
 @mod_blog.route('/allblog',methods=['GET'])
 @login_required
