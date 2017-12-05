@@ -4,8 +4,8 @@
  WORKDIR /flask-blog-poc
  COPY . /flask-blog-poc
  RUN rm -rf migrations
- RUN apt-get -y update
- RUN apt-get -y install curl wget make gcc build-essential
+ RUN apt-get -y update --fix-missing
+ RUN apt-get -y install curl wget make gcc build-essential --fix-missing
  ADD requirements.txt /flask-blog-poc/
  RUN pip install -r requirements.txt
  ADD . /flas-blog-poc/

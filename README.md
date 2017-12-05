@@ -1,6 +1,12 @@
 # flask-blog-poc
 Flask Microblogging PlatForm.
 
+1.Added Comment Functionality.
+2.Added Social Login for gmail.
+3.Added Authentication to flask_admin.
+4.Added jquery DatePicker for Datefield in blog adding.
+
+
 For running application follow steps given below:
 	
 	1. create virtualenv and activate it as follows:
