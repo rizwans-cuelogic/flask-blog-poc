@@ -5,7 +5,7 @@ Flask Microblogging PlatForm.
 2.Added Social Login for gmail.
 3.Added Authentication to flask_admin.
 4.Added jquery DatePicker for Datefield in blog adding.
-
+5.Added different Testsuits according to functionality.
 
 For running application follow steps given below:
 	
