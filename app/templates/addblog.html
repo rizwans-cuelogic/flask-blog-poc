@@ -1,11 +1,23 @@
 {% extends 'base.html' %}
 {% block head %}
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<script>
+	$(function() {
+		$( ".dtpick" ).datepicker({ dateFormat: 'yy/mm/dd' });
+	});
+	</script>
 	<script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
 	<script>tinymce.init({ selector:'textarea' });</script>
 	<style>
 		.margin-bt{
 			margin-bottom: 20px;
 		}
+		.dtpick{
+			width:30%;
+		}
+		#ui-datepicker-div{ top:578px !important; }
 	</style>
 {% endblock %}
 {% block content %}
@@ -40,7 +52,7 @@
 					<span style="color:red">{{ error }}</span><br>
 				{% endfor %}
             	<label for="password" class="control-label">Publication_date (yyyy/mm/dd)</label><br>
-            	{{ form.publication_date(class_='form-control') }}
+            	{{ form.publication_date(class_='form-control dtpick') }}
             </div>  
         </div>
 		<p>{{form.submit(class_='btn btn-primary')}}</p>
