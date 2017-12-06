@@ -2,10 +2,12 @@
 Flask Microblogging PlatForm.
 
 1.Added Comment Functionality.
-2.Added Social Login for gmail.
+2.Added google Oauth2 login for gmail.
 3.Added Authentication to flask_admin.
 4.Added jquery DatePicker for Datefield in blog adding.
 5.Added different Testsuits according to functionality.
+6.configure on nginx using gunicorn reverse proxy.
+
 
 For running application follow steps given below:
 	

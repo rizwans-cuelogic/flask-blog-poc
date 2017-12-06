@@ -1,12 +1,13 @@
 import os
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 class Auth:
 	CLIENT_ID = ('607173259185-r9gju8166ccn74s76lq3b930mbvdrkif'
 					'.apps.googleusercontent.com')
 	CLIENT_SECRET = 'n1j_EAYN5e5x-B5BsPEWvTqC'
-	REDIRECT_URI = 'https://localhost:8085/gCallback'
+	REDIRECT_URI = 'http://localhost:8085/gCallback'
 	AUTH_URI = 'https://accounts.google.com/o/oauth2/auth'
 	TOKEN_URI = 'https://accounts.google.com/o/oauth2/token'
 	USER_INFO = 'https://www.googleapis.com/userinfo/v2/me'
@@ -39,7 +40,7 @@ class DevelopmentConfig(Config):
 	SQLALCHEMY_DATABASE_URI = "postgresql://postgres:admin123@localhost:5432/blog"
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 	SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'prompt': 'select_account'}
-
+	os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 class ProductionConfig(Config):
 
