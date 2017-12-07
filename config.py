@@ -37,7 +37,8 @@ class DevelopmentConfig(Config):
 	
 	DEBUG = True
 	WTF_CSRF_ENABLED = True
-	SQLALCHEMY_DATABASE_URI = "postgresql://postgres:admin123@localhost:5432/blog"
+	SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+	#"postgresql://postgres:admin123@localhost:5432/blog"
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 	SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'prompt': 'select_account'}
 	os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
