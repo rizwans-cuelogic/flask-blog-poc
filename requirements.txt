@@ -25,6 +25,7 @@ Flask-Testing==0.6.2
 Flask-WTF==0.14.2
 flipflop==1.0
 guess-language==0.2
+gunicorn==19.7.1
 idna==2.6
 infinity==1.4
 intervals==0.8.0
@@ -52,6 +53,7 @@ sqlparse==0.2.4
 Tempita==0.5.2
 text-unidecode==1.1
 urllib3==1.22
+uWSGI==2.0.15
 validators==0.12.0
 Werkzeug==0.12.2
 WTForms==2.1
