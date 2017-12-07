@@ -7,7 +7,7 @@ class Auth:
 	CLIENT_ID = ('607173259185-r9gju8166ccn74s76lq3b930mbvdrkif'
 					'.apps.googleusercontent.com')
 	CLIENT_SECRET = 'n1j_EAYN5e5x-B5BsPEWvTqC'
-	REDIRECT_URI = 'http://localhost:8085/gCallback'
+	REDIRECT_URI = 'https://flask-blog-deploy.herokuapp.com/gCallback'
 	AUTH_URI = 'https://accounts.google.com/o/oauth2/auth'
 	TOKEN_URI = 'https://accounts.google.com/o/oauth2/token'
 	USER_INFO = 'https://www.googleapis.com/userinfo/v2/me'
